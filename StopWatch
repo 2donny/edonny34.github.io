@@ -1,0 +1,74 @@
+import UIKit
+
+class ViewController: UIViewController {
+
+    @IBOutlet weak var MinuteLabel: UILabel!
+    @IBOutlet weak var SecondLabel: UILabel!
+    @IBOutlet weak var milliSecondLabel: UILabel!
+    @IBOutlet weak var StartStopButton: UIButton!
+    @IBOutlet weak var ResetButton: UIButton!
+    
+    func resetLabel() {
+        MinuteLabel.text = "00"
+        SecondLabel.text = "00"
+        milliSecondLabel.text = "00"
+        
+    }
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        resetLabel()
+        StartStopButton.setTitle("Start", for: .normal)
+        ResetButton.setTitle("Rest", for: .normal)
+        
+    }
+    
+    var StartTime = 0.0
+    var elapsed = 0.0
+    var timer = Timer()
+    var isStarting = false
+    
+    @IBAction func ActionStartButton(_ sender: Any) {
+        if isStarting {
+            timer.invalidate()
+            StartStopButton.setTitle("Start", for: .normal
+            )
+        }else {
+            StartTime = Date().timeIntervalSince1970 - elapsed
+            timer = Timer.scheduledTimer(timeInterval: 0.01, target: self, selector: #selector(update), userInfo: nil, repeats: true)
+            StartStopButton.setTitle("Stop", for: .normal
+            )
+        }
+        isStarting = !isStarting
+    }
+    
+    
+    
+    @objc func update() {
+        elapsed = Date().timeIntervalSince1970 - StartTime
+        
+        let date = Date(timeIntervalSince1970: elapsed)
+        let formatter = DateFormatter()
+        formatter.dateFormat = "mm"
+        MinuteLabel.text = formatter.string(from: date)
+        
+        formatter.dateFormat = "ss"
+        SecondLabel.text = formatter.string(from: date)
+        
+        formatter.dateFormat = "SS"
+        milliSecondLabel.text = formatter.string(from: date)
+        
+        
+    }
+    
+    
+    @IBAction func ActionReset(_ sender: Any) {
+        resetLabel()
+        elapsed = 0.0
+        StartTime = Date().timeIntervalSince1970 - elapsed
+        
+    }
+    
+    
+}
+
